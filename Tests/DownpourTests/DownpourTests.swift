@@ -10,193 +10,202 @@ import XCTest
 @testable import Downpour
 
 class DownpourVideoTests: XCTestCase {
-
-	override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-
     func testMovie1() {
-        let downpour = Downpour(name: "Movie.Name.2013.1080p.BluRay.H264.AAC.mp4")
-        XCTAssertEqual(downpour.title, "Movie Name")
-        XCTAssertEqual(downpour.year ?? 0, 2013)
-        XCTAssertNil(downpour.season)
-        XCTAssertNil(downpour.episode)
-        XCTAssertEqual(downpour.type, .movie)
+        let metadata = Downpour("Movie.Name.2013.1080p.BluRay.H264.AAC.mp4")
+        XCTAssertEqual(metadata.title, "Movie Name")
+        XCTAssertEqual(metadata.year ?? 0, 2013)
+        XCTAssertNil(metadata.season)
+        XCTAssertNil(metadata.episode)
+        XCTAssertEqual(metadata.type, .movie)
+        XCTAssertEqual(metadata.basicPlexName, "Movie Name (2013)")
     }
 
     func testMovie2() {
-        let downpour = Downpour(name: "Movie_Name_2_2017_x264_RARBG.avi")
-        XCTAssertEqual(downpour.title, "Movie_Name_2") // FIXME
-        XCTAssertEqual(downpour.year ?? 0, 2017)
-        XCTAssertNil(downpour.season)
-        XCTAssertNil(downpour.episode)
-        XCTAssertEqual(downpour.type, .movie)
+        let metadata = Downpour("Movie_Name_2_2017_x264_RARBG.avi")
+        XCTAssertEqual(metadata.title, "Movie_Name_2") // FIXME
+        XCTAssertEqual(metadata.year ?? 0, 2017)
+        XCTAssertNil(metadata.season)
+        XCTAssertNil(metadata.episode)
+        XCTAssertEqual(metadata.type, .movie)
+        XCTAssertEqual(metadata.basicPlexName, "Movie_Name_2 (2017)") // FIXME
     }
 
     func testStandardShow1() {
-        let downpour = Downpour(name: "Mr.Show.Name.S01E02.Source.Quality.Etc-Group")
-        XCTAssertEqual(downpour.title, "Mr Show Name")
-        XCTAssertEqual(downpour.season, 1)
-        XCTAssertEqual(downpour.episode, 2)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertNil(downpour.year)
+        let metadata = Downpour("Mr.Show.Name.S01E02.Source.Quality.Etc-Group")
+        XCTAssertEqual(metadata.title, "Mr Show Name")
+        XCTAssertEqual(metadata.season, 1)
+        XCTAssertEqual(metadata.episode, 2)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertNil(metadata.year)
+        XCTAssertEqual(metadata.basicPlexName, "Mr Show Name - S01E02")
     }
 
     func testStandardShow2() {
-        let downpour = Downpour(name: "Show.Name.S01E02")
-        XCTAssertEqual(downpour.title, "Show Name")
-        XCTAssertEqual(downpour.season, 1)
-        XCTAssertEqual(downpour.episode, 2)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertNil(downpour.year)
+        let metadata = Downpour("Show.Name.S01E02")
+        XCTAssertEqual(metadata.title, "Show Name")
+        XCTAssertEqual(metadata.season, 1)
+        XCTAssertEqual(metadata.episode, 2)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertNil(metadata.year)
+        XCTAssertEqual(metadata.basicPlexName, "Show Name - S01E02")
     }
 
     func testStandardShow3() {
-        let downpour = Downpour(name: "Show Name - S01E02 - My Ep Name")
-        XCTAssertEqual(downpour.title, "Show Name")
-        XCTAssertEqual(downpour.season, 1)
-        XCTAssertEqual(downpour.episode, 2)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertNil(downpour.year)
+        let metadata = Downpour("Show Name - S01E02 - My Ep Name")
+        XCTAssertEqual(metadata.title, "Show Name")
+        XCTAssertEqual(metadata.season, 1)
+        XCTAssertEqual(metadata.episode, 2)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertNil(metadata.year)
+        XCTAssertEqual(metadata.basicPlexName, "Show Name - S01E02")
     }
 
     func testStandardShow4() {
-        let downpour = Downpour(name: "Show.2.0.Name.S01.E03.My.Ep.Name-Group")
-        XCTAssertEqual(downpour.title, "Show 2.0 Name")
-        XCTAssertEqual(downpour.season, 1)
-        XCTAssertEqual(downpour.episode, 3)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertNil(downpour.year)
+        let metadata = Downpour("Show.2.0.Name.S01.E03.My.Ep.Name-Group")
+        XCTAssertEqual(metadata.title, "Show 2.0 Name")
+        XCTAssertEqual(metadata.season, 1)
+        XCTAssertEqual(metadata.episode, 3)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertNil(metadata.year)
+        XCTAssertEqual(metadata.basicPlexName, "Show 2.0 Name - S01E03")
     }
 
     func testStandardShow5() {
-        let downpour = Downpour(name: "Show Name - S06E01 - 2009-12-20 - Ep Name")
-        XCTAssertEqual(downpour.title, "Show Name")
-        XCTAssertEqual(downpour.season, 6)
-        XCTAssertEqual(downpour.episode, 1)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertNil(downpour.year)
+        let metadata = Downpour("Show Name - S06E01 - 2009-12-20 - Ep Name")
+        XCTAssertEqual(metadata.title, "Show Name")
+        XCTAssertEqual(metadata.season, 6)
+        XCTAssertEqual(metadata.episode, 1)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertNil(metadata.year)
+        XCTAssertEqual(metadata.basicPlexName, "Show Name - S06E01")
     }
 
     func testStandardShow6() {
-        let downpour = Downpour(name: "Show Name - S06E01 - -30-")
-        XCTAssertEqual(downpour.title, "Show Name")
-        XCTAssertEqual(downpour.season, 6)
-        XCTAssertEqual(downpour.episode, 1)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertNil(downpour.year)
+        let metadata = Downpour("Show Name - S06E01 - -30-")
+        XCTAssertEqual(metadata.title, "Show Name")
+        XCTAssertEqual(metadata.season, 6)
+        XCTAssertEqual(metadata.episode, 1)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertNil(metadata.year)
+        XCTAssertEqual(metadata.basicPlexName, "Show Name - S06E01")
     }
 
     func testStandardShow7() {
-        let downpour = Downpour(name: "Show.Name.S06E01.Other.WEB-DL")
-        XCTAssertEqual(downpour.title, "Show Name")
-        XCTAssertEqual(downpour.season, 6)
-        XCTAssertEqual(downpour.episode, 1)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertNil(downpour.year)
+        let metadata = Downpour("Show.Name.S06E01.Other.WEB-DL")
+        XCTAssertEqual(metadata.title, "Show Name")
+        XCTAssertEqual(metadata.season, 6)
+        XCTAssertEqual(metadata.episode, 1)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertNil(metadata.year)
+        XCTAssertEqual(metadata.basicPlexName, "Show Name - S06E01")
     }
 
     func testStandardShow8() {
-        let downpour = Downpour(name: "Show.Name.S06E01 Some-Stuff Here")
-        XCTAssertEqual(downpour.title, "Show Name")
-        XCTAssertEqual(downpour.season, 6)
-        XCTAssertEqual(downpour.episode, 1)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertNil(downpour.year)
+        let metadata = Downpour("Show.Name.S06E01 Some-Stuff Here")
+        XCTAssertEqual(metadata.title, "Show Name")
+        XCTAssertEqual(metadata.season, 6)
+        XCTAssertEqual(metadata.episode, 1)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertNil(metadata.year)
+        XCTAssertEqual(metadata.basicPlexName, "Show Name - S06E01")
     }
 
     func testStandardShow9() {
-        let downpour = Downpour(name: "Show.Name-0.2010.S01E02.Source.Quality.Etc-Group")
-        XCTAssertEqual(downpour.title, "Show Name-0")  // FIXME
-        XCTAssertEqual(downpour.season, 1)
-        XCTAssertEqual(downpour.episode, 2)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertEqual(downpour.year ?? 0, 2010)
+        let metadata = Downpour("Show.Name-0.2010.S01E02.Source.Quality.Etc-Group")
+        XCTAssertEqual(metadata.title, "Show Name-0") // FIXME
+        XCTAssertEqual(metadata.season, 1)
+        XCTAssertEqual(metadata.episode, 2)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertEqual(metadata.year ?? 0, 2010)
+        XCTAssertEqual(metadata.basicPlexName, "Show Name-0 (2010) - S01E02") // FIXME
     }
 
     func testStandardShow10() {
-        let downpour = Downpour(name: "Show-Name-S06E01-720p")
-        XCTAssertEqual(downpour.title, "Show-Name")  // FIXME
-        XCTAssertEqual(downpour.season, 6)
-        XCTAssertEqual(downpour.episode, 1)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertNil(downpour.year)
+        let metadata = Downpour("Show-Name-S06E01-720p")
+        XCTAssertEqual(metadata.title, "Show-Name") // FIXME
+        XCTAssertEqual(metadata.season, 6)
+        XCTAssertEqual(metadata.episode, 1)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertNil(metadata.year)
+        XCTAssertEqual(metadata.basicPlexName, "Show-Name - S06E01") // FIXME
     }
 
     func testStandardShow11() {
-        let downpour = Downpour(name: "Show Name - s2005e01")
-        XCTAssertEqual(downpour.title, "Show Name")
-        XCTAssertEqual(downpour.season, 2005)
-        XCTAssertEqual(downpour.episode, 1)
-        XCTAssertEqual(downpour.type, .tv)
+        let metadata = Downpour("Show Name - s2005e01")
+        XCTAssertEqual(metadata.title, "Show Name")
+        XCTAssertEqual(metadata.season, 2005)
+        XCTAssertEqual(metadata.episode, 1)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertEqual(metadata.basicPlexName, "Show Name - S2005E01")
     }
 
     func testStandardShow12() {
-        let downpour = Downpour(name: "Show Name - s05e01")
-        XCTAssertEqual(downpour.title, "Show Name")
-        XCTAssertEqual(downpour.season, 5)
-        XCTAssertEqual(downpour.episode, 1)
-        XCTAssertEqual(downpour.type, .tv)
+        let metadata = Downpour("Show Name - s05e01")
+        XCTAssertEqual(metadata.title, "Show Name")
+        XCTAssertEqual(metadata.season, 5)
+        XCTAssertEqual(metadata.episode, 1)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertEqual(metadata.basicPlexName, "Show Name - S05E01")
     }
 
     func testFOVShow1() {
-        let downpour = Downpour(name: "Show_Name.1x02.Source_Quality_Etc-Group")
-        XCTAssertEqual(downpour.title, "Show_Name")  // FIXME
-        XCTAssertEqual(downpour.season, 1)
-        XCTAssertEqual(downpour.episode, 2)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertNil(downpour.year)
+        let metadata = Downpour("Show_Name.1x02.Source_Quality_Etc-Group")
+        XCTAssertEqual(metadata.title, "Show_Name") // FIXME
+        XCTAssertEqual(metadata.season, 1)
+        XCTAssertEqual(metadata.episode, 2)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertNil(metadata.year)
+        XCTAssertEqual(metadata.basicPlexName, "Show_Name - S01E02") // FIXME
     }
 
     func testFOVShow2() {
-        let downpour = Downpour(name: "Show Name 1x02")
-        XCTAssertEqual(downpour.title, "Show Name")
-        XCTAssertEqual(downpour.season, 1)
-        XCTAssertEqual(downpour.episode, 2)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertNil(downpour.year)
+        let metadata = Downpour("Show Name 1x02")
+        XCTAssertEqual(metadata.title, "Show Name")
+        XCTAssertEqual(metadata.season, 1)
+        XCTAssertEqual(metadata.episode, 2)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertNil(metadata.year)
+        XCTAssertEqual(metadata.basicPlexName, "Show Name - S01E02")
     }
 
     func testFOVShow3() {
-        let downpour = Downpour(name: "Show Name 1x02 x264 Test")
-        XCTAssertEqual(downpour.title, "Show Name")
-        XCTAssertEqual(downpour.season, 1)
-        XCTAssertEqual(downpour.episode, 2)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertNil(downpour.year)
+        let metadata = Downpour("Show Name 1x02 x264 Test")
+        XCTAssertEqual(metadata.title, "Show Name")
+        XCTAssertEqual(metadata.season, 1)
+        XCTAssertEqual(metadata.episode, 2)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertNil(metadata.year)
+        XCTAssertEqual(metadata.basicPlexName, "Show Name - S01E02")
     }
 
     func testFOVShow4() {
-        let downpour = Downpour(name: "Show Name - 1x02 - My Ep Name")
-        XCTAssertEqual(downpour.title, "Show Name")
-        XCTAssertEqual(downpour.season, 1)
-        XCTAssertEqual(downpour.episode, 2)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertNil(downpour.year)
+        let metadata = Downpour("Show Name - 1x02 - My Ep Name")
+        XCTAssertEqual(metadata.title, "Show Name")
+        XCTAssertEqual(metadata.season, 1)
+        XCTAssertEqual(metadata.episode, 2)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertNil(metadata.year)
+        XCTAssertEqual(metadata.basicPlexName, "Show Name - S01E02")
     }
 
     func testFOVShow5() {
-        let downpour = Downpour(name: "Show Name 1x02 x264 Test")
-        XCTAssertEqual(downpour.title, "Show Name")
-        XCTAssertEqual(downpour.season, 1)
-        XCTAssertEqual(downpour.episode, 2)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertNil(downpour.year)
+        let metadata = Downpour("Show Name 1x02 x264 Test")
+        XCTAssertEqual(metadata.title, "Show Name")
+        XCTAssertEqual(metadata.season, 1)
+        XCTAssertEqual(metadata.episode, 2)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertNil(metadata.year)
+        XCTAssertEqual(metadata.basicPlexName, "Show Name - S01E02")
     }
 
     func testFOVShow6() {
-        let downpour = Downpour(name: "Show Name - 1x02 - My Ep Name")
-        XCTAssertEqual(downpour.title, "Show Name")
-        XCTAssertEqual(downpour.season, 1)
-        XCTAssertEqual(downpour.episode, 2)
-        XCTAssertEqual(downpour.type, .tv)
-        XCTAssertNil(downpour.year)
+        let metadata = Downpour("Show Name - 1x02 - My Ep Name")
+        XCTAssertEqual(metadata.title, "Show Name")
+        XCTAssertEqual(metadata.season, 1)
+        XCTAssertEqual(metadata.episode, 2)
+        XCTAssertEqual(metadata.type, .tv)
+        XCTAssertNil(metadata.year)
+        XCTAssertEqual(metadata.basicPlexName, "Show Name - S01E02")
     }
 }
 
