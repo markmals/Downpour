@@ -34,6 +34,7 @@ final class Downpour: CustomStringConvertible {
         rawString = name
     }
     
+    /// A description of the media's known metadata
     public lazy var description: String = {
         let titleDesc = "Title: \(self.title)\n"
         var episodeDesc = ""
@@ -52,15 +53,16 @@ final class Downpour: CustomStringConvertible {
         }
     }()
     
+    /// The title of the media
     public lazy var title: String = {
-        let _title: String?
+        let tempTitle: String?
         
         switch type {
         case .movie:
             if let year = self.year {
                 let endIndex = rawString.index(before: rawString.range(of: String(year))!.lowerBound)
-                _title = String(rawString[...endIndex])
-            } else { _title = nil }
+                tempTitle = String(rawString[...endIndex])
+            } else { tempTitle = nil }
         case .tv:
             if let sEp = seasonEpisode, let sEpRange = rawString.range(of: sEp), sEpRange.lowerBound != rawString.startIndex {
                 let endIndex = rawString.index(before: sEpRange.lowerBound)
@@ -70,11 +72,11 @@ final class Downpour: CustomStringConvertible {
                     let endIndex = string.index(before: string.range(of: String(year))!.lowerBound)
                     string = string[...endIndex]
                 }
-                _title = String(string)
-            } else { _title = nil }
+                tempTitle = String(string)
+            } else { tempTitle = nil }
         }
         
-        if let title = _title {
+        if let title = tempTitle {
             var clean = title.cleanedString
             
             if let uncleanMatch = title.range(of: #"\d+\.\d+"#, options: .regularExpression),
@@ -88,38 +90,44 @@ final class Downpour: CustomStringConvertible {
         return rawString.cleanedString
     }()
     
-    public lazy var seasonEpisode: String? = {
-        var _match: Range<String.Index>?
-        var _patternMatched: Pattern?
+    /// Used internally for determining other metadata
+    private lazy var seasonEpisode: String? = {
+        var match: Range<String.Index>?
+        var patternMatched: Pattern?
         
         for (index, pattern) in Pattern.allCases.filter({ return $0 != .year}).enumerated() {
-            if let __match = rawString.range(of: pattern, options: Downpour.regexOptions) {
-                _match = __match
-                _patternMatched = Pattern.allCases[index]
+            if let _match = rawString.range(of: pattern, options: Downpour.regexOptions) {
+                match = _match
+                patternMatched = Pattern.allCases[index]
                 break
             }
         }
         
-        guard var match = _match, let patternMatched = _patternMatched else { return nil }
+        guard var goodMatch = match, let goodPatternMatched = patternMatched else { return nil }
         
         let matchString: String?
-        switch patternMatched {
+        switch goodPatternMatched {
         case .tricky:
-            match = rawString.index(after: match.lowerBound)..<match.upperBound
-            matchString = String(rawString[match])
+            goodMatch = rawString.index(after: goodMatch.lowerBound)..<goodMatch.upperBound
+            matchString = String(rawString[goodMatch])
         case .combined:
-            match = match.lowerBound..<match.upperBound
-            matchString = String(rawString[match])
+            goodMatch = goodMatch.lowerBound..<goodMatch.upperBound
+            matchString = String(rawString[goodMatch])
         case .altSeason2:
-            let str = rawString[match].cleanedString
+            let str = rawString[goodMatch].cleanedString
             guard ["264", "720"].contains(str[1...3]) else { return str }
             fallthrough
-        default: matchString = String(rawString[match])
+        default: matchString = String(rawString[goodMatch])
         }
         
         return matchString
     }()
     
+    /**
+     * The season number
+     *
+     * Not avaliable if `self.type` is `Downpour.MediaType.movie`
+     */
     public lazy var season: UInt? = {
         guard let both = seasonEpisode?.cleanedString else { return nil }
         let seasonLabel = "Season "
@@ -154,6 +162,11 @@ final class Downpour: CustomStringConvertible {
         return UInt(first[startIndex..<first.endIndex].cleanedString)
     }()
     
+    /**
+     * The episode number
+     *
+     * Not avaliable if `self.type` is `Downpour.MediaType.movie`
+     */
     public lazy var episode: UInt? = {
         let episodeLabel = "Episode "
         guard let both = seasonEpisode?.cleanedString else { return nil }
@@ -182,6 +195,7 @@ final class Downpour: CustomStringConvertible {
         return UInt(pieces[i].cleanedString)
     }()
     
+    /// The type of the media
     public lazy var type: Downpour.MediaType = {
         // Sometimes it mestakes the x/h 264 as season 2, episode 64. I don't
         // know of any shows that have 64 episode in a single season, so
@@ -194,6 +208,7 @@ final class Downpour: CustomStringConvertible {
         return .movie
     }()
     
+    /// The year number
     public lazy var year: UInt? = {
         guard let match = rawString.range(of: Pattern.year, options: Downpour.regexOptions) else { return nil }
         return UInt(rawString[match].cleanedString)
@@ -207,15 +222,17 @@ final class Downpour: CustomStringConvertible {
         return nil
     }
     
+    /// The season, with at most one leading zero
     public lazy var formattedSeason: String? = {
         return format(number: season)
     }()
     
+    /// The episode, with at most one leading zero
     public lazy var formattedEpisode: String? = {
         return format(number: episode)
     }()
     
-    /// Both the season and the episode together.
+    /// Both the season and the episode together, in the format "S##E##"
     public lazy var formattedSeasonEpisode: String = {
         var s = ""
         var e = ""
@@ -226,6 +243,11 @@ final class Downpour: CustomStringConvertible {
         return "\(s)\(e)"
     }()
     
+    /**
+     * The basic name file name in the Plex Media Server format of "Name (Year) - S##E##"
+     *
+     * More information on the [Plex Media Server file naming format](https://support.plex.tv/articles/200220687-naming-series-season-based-tv-shows/)
+     */
     public lazy var basicPlexName: String = {
         var yearDesc = ""
         
