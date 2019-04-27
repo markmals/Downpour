@@ -26,14 +26,12 @@ extension String {
     }
 
     func range<Enum: RawRepresentable>(of pattern: Enum, options: String.CompareOptions = []) -> Range<String.Index>? where Enum.RawValue == String {
-        return self.range(of: pattern.rawValue, options: options)
+        return range(of: pattern.rawValue, options: options)
     }
 
-	subscript (r: CountableClosedRange<Int>) -> Substring {
-    	get {
-      		let startIndex =  self.index(self.startIndex, offsetBy: r.lowerBound)
-	  	    let endIndex = self.index(startIndex, offsetBy: r.upperBound - r.lowerBound)
-      		return self[startIndex...endIndex]
-    	}
-  	}
+    subscript(r: CountableClosedRange<Int>) -> Substring {
+        let startIndex = index(self.startIndex, offsetBy: r.lowerBound)
+        let endIndex = index(startIndex, offsetBy: r.upperBound - r.lowerBound)
+        return self[startIndex ... endIndex]
+    }
 }

@@ -11,6 +11,6 @@ let package = Package(
             name: "DownpourTests",
             dependencies: ["Downpour"],
             path: "Tests/DownpourTests"
-        )
+        ),
     ]
 )

@@ -1,6 +1,6 @@
-import XCTest
 @testable import DownpourTests
+import XCTest
 
 XCTMain([
-    testCase(DownpourVideoTests.allTests)
+    testCase(DownpourVideoTests.allTests),
 ])
