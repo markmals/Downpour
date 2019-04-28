@@ -8,7 +8,7 @@
 
 import Foundation
 
-final class Downpour: CustomStringConvertible {
+public final class Downpour: CustomStringConvertible {
     private enum Pattern: String, CaseIterable {
         case pretty = #"S(\d{4}|\d{1,2})[\-\.\s_]?E\d{1,2}"#
         case tricky = #"[^\d](\d{4}|\d{1,2})[X\-\.\s_]\d{1,2}([^\d]|$)"#
@@ -35,7 +35,7 @@ final class Downpour: CustomStringConvertible {
     }
 
     /// A description of the media's known metadata
-    public lazy var description: String = {
+    public private(set) lazy var description: String = {
         let titleDesc = "Title: \(self.title)\n"
         var episodeDesc = ""
         var seasonDesc = ""
@@ -54,12 +54,13 @@ final class Downpour: CustomStringConvertible {
     }()
 
     /// The title of the media
-    public lazy var title: String = {
+    public private(set) lazy var title: String = {
         let tempTitle: String?
 
         switch type {
         case .movie:
             if let year = self.year {
+                // Erase self.year from the title
                 let endIndex = rawString.index(before: rawString.range(of: String(year))!.lowerBound)
                 tempTitle = String(rawString[...endIndex])
             } else { tempTitle = nil }
@@ -128,7 +129,7 @@ final class Downpour: CustomStringConvertible {
      *
      * Not avaliable if `self.type` is `Downpour.MediaType.movie`
      */
-    public lazy var season: UInt? = {
+    public private(set) lazy var season: UInt? = {
         guard let both = seasonEpisode?.cleanedString else { return nil }
         let seasonLabel = "Season "
 
@@ -167,7 +168,7 @@ final class Downpour: CustomStringConvertible {
      *
      * Not avaliable if `self.type` is `Downpour.MediaType.movie`
      */
-    public lazy var episode: UInt? = {
+    public private(set) lazy var episode: UInt? = {
         let episodeLabel = "Episode "
         guard let both = seasonEpisode?.cleanedString else { return nil }
 
@@ -196,7 +197,7 @@ final class Downpour: CustomStringConvertible {
     }()
 
     /// The type of the media
-    public lazy var type: Downpour.MediaType = {
+    public private(set) lazy var type: Downpour.MediaType = {
         // Sometimes it mestakes the x/h 264 as season 2, episode 64. I don't
         // know of any shows that have 64 episode in a single season, so
         // checking that the episode < 64 should be safe and will resolve these
@@ -209,7 +210,7 @@ final class Downpour: CustomStringConvertible {
     }()
 
     /// The year number
-    public lazy var year: UInt? = {
+    public private(set) lazy var year: UInt? = {
         guard let match = rawString.range(of: Pattern.year, options: Downpour.regexOptions) else { return nil }
         return UInt(rawString[match].cleanedString)
     }()
@@ -223,17 +224,17 @@ final class Downpour: CustomStringConvertible {
     }
 
     /// The season, with at most one leading zero
-    public lazy var formattedSeason: String? = {
+    public private(set) lazy var formattedSeason: String? = {
         format(number: season)
     }()
 
     /// The episode, with at most one leading zero
-    public lazy var formattedEpisode: String? = {
+    public private(set) lazy var formattedEpisode: String? = {
         format(number: episode)
     }()
 
     /// Both the season and the episode together, in the format "S##E##"
-    public lazy var formattedSeasonEpisode: String = {
+    public private(set) lazy var formattedSeasonEpisode: String = {
         var s = ""
         var e = ""
 
@@ -248,7 +249,7 @@ final class Downpour: CustomStringConvertible {
      *
      * More information on the [Plex Media Server file naming format](https://support.plex.tv/articles/200220687-naming-series-season-based-tv-shows/)
      */
-    public lazy var basicPlexName: String = {
+    public private(set) lazy var basicPlexName: String = {
         var yearDesc = ""
 
         if let year = self.year { yearDesc = " (\(year))" }
